@@ -51,5 +51,11 @@ export function setupDefaultViewer() {
   bindDefaultCopyHandler(viewer);
   bindDefaultPasteHandler(viewer);
 
+  viewer.state.changed.add(() => {
+    if (window && window.parent) {
+      window.parent.postMessage({ 'type': 'state_change', 'state': viewer.state.toJSON() }, '*')
+    }
+  })
+
   return viewer;
 }
