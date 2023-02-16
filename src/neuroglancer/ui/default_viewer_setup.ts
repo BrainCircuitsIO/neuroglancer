@@ -57,5 +57,10 @@ export function setupDefaultViewer() {
     }
   })
 
+  window.parent.addEventListener('message', (event) => {
+    console.log('in neuroglancer, received event', event)
+    // TODO: trigger refresh of specified layers in the event by name
+  })
+
   return viewer;
 }
