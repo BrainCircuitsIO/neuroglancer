@@ -393,6 +393,7 @@ export abstract class RenderedDataPanel extends RenderedPanel {
     element.classList.add('neuroglancer-rendered-data-panel');
     element.classList.add('neuroglancer-panel');
     element.classList.add('neuroglancer-noselect');
+    element.style.borderColor= '#ffffff';
     if (typeof NEUROGLANCER_SHOW_OBJECT_SELECTION_TOOLTIP !== 'undefined' &&
         NEUROGLANCER_SHOW_OBJECT_SELECTION_TOOLTIP === true) {
       element.title =
