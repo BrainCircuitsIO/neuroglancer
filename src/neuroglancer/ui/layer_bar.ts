@@ -203,6 +203,7 @@ export class LayerBar extends RefCounted {
     super();
     const {element, manager, selectedLayer} = this;
     element.className = 'neuroglancer-layer-panel';
+    element.style.display = 'none';
     this.registerDisposer(manager.layerSelectedValues.changed.add(() => {
       this.handleLayerValuesChanged();
     }));

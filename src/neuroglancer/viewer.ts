@@ -482,7 +482,7 @@ export class Viewer extends RefCounted implements ViewerState {
 
     const topRow = document.createElement('div');
     topRow.classList.add('neuroglancer-viewer-top-row');
-    topRow.style.display = 'flex';
+    topRow.style.display = 'none';
     topRow.style.flexDirection = 'row';
     topRow.style.alignItems = 'stretch';
 
