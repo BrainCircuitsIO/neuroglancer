@@ -250,6 +250,7 @@ export class DisplayDimensionsWidget extends RefCounted {
     this.registerDisposer(depthRange.changed.add(handleActivity));
 
     element.classList.add('neuroglancer-display-dimensions-widget');
+    element.style.display = 'none'
     element.appendChild(dimensionGridContainer);
     dimensionGridContainer.classList.add('neuroglancer-display-dimensions-widget-dimension-grid');
     element.addEventListener('pointerleave', () => {
