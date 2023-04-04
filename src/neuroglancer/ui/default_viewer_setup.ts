@@ -64,8 +64,9 @@ export function setupDefaultViewer() {
       //console.log("viewer state changed");
       if (window && window.parent) {
         //console.log("has window, and parent window", window, window.parent);
-        window.parent.postMessage({ type: "state_change", state: viewer.state.toJSON() }, "*");
-        //console.log("json", viewer.state.toJSON());
+        //window.parent.postMessage({ type: "state_change", state: viewer.state.toJSON() }, "*");
+        console.log("json", viewer.state.toJSON());
+        // JSON.stringify(viewer.state.toJSON())
       }
     });
   }
