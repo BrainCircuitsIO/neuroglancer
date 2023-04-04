@@ -14,48 +14,61 @@
  * limitations under the License.
  */
 
-import {StatusMessage} from 'neuroglancer/status';
-import {bindDefaultCopyHandler, bindDefaultPasteHandler} from 'neuroglancer/ui/default_clipboard_handling';
-import {setDefaultInputEventBindings} from 'neuroglancer/ui/default_input_event_bindings';
-import {makeDefaultViewer} from 'neuroglancer/ui/default_viewer';
-import {bindTitle} from 'neuroglancer/ui/title';
-import {UrlHashBinding} from 'neuroglancer/ui/url_hash_binding';
+import { StatusMessage } from "neuroglancer/status";
+import {
+  bindDefaultCopyHandler,
+  bindDefaultPasteHandler,
+} from "neuroglancer/ui/default_clipboard_handling";
+import { setDefaultInputEventBindings } from "neuroglancer/ui/default_input_event_bindings";
+import { makeDefaultViewer } from "neuroglancer/ui/default_viewer";
+import { bindTitle } from "neuroglancer/ui/title";
+import { UrlHashBinding } from "neuroglancer/ui/url_hash_binding";
 
-declare var NEUROGLANCER_DEFAULT_STATE_FRAGMENT: string|undefined;
+declare var NEUROGLANCER_DEFAULT_STATE_FRAGMENT: string | undefined;
 
 /**
  * Sets up the default neuroglancer viewer.
  */
 export function setupDefaultViewer() {
-  let viewer = (<any>window)['viewer'] = makeDefaultViewer();
+  let viewer = ((<any>window)["viewer"] = makeDefaultViewer());
   setDefaultInputEventBindings(viewer.inputEventBindings);
 
   const hashBinding = viewer.registerDisposer(
-      new UrlHashBinding(viewer.state, viewer.dataSourceProvider.credentialsManager, {
-        defaultFragment: typeof NEUROGLANCER_DEFAULT_STATE_FRAGMENT !== 'undefined' ?
-            NEUROGLANCER_DEFAULT_STATE_FRAGMENT :
-            undefined
-      }));
-  viewer.registerDisposer(hashBinding.parseError.changed.add(() => {
-    const {value} = hashBinding.parseError;
-    if (value !== undefined) {
-      const status = new StatusMessage();
-      status.setErrorMessage(`Error parsing state: ${value.message}`);
-      console.log('Error parsing state', value);
-    }
-    hashBinding.parseError;
-  }));
+    new UrlHashBinding(viewer.state, viewer.dataSourceProvider.credentialsManager, {
+      defaultFragment:
+        typeof NEUROGLANCER_DEFAULT_STATE_FRAGMENT !== "undefined"
+          ? NEUROGLANCER_DEFAULT_STATE_FRAGMENT
+          : undefined,
+    })
+  );
+  viewer.registerDisposer(
+    hashBinding.parseError.changed.add(() => {
+      const { value } = hashBinding.parseError;
+      if (value !== undefined) {
+        const status = new StatusMessage();
+        status.setErrorMessage(`Error parsing state: ${value.message}`);
+        console.log("Error parsing state", value);
+      }
+      hashBinding.parseError;
+    })
+  );
   hashBinding.updateFromUrlHash();
   viewer.registerDisposer(bindTitle(viewer.title));
 
   bindDefaultCopyHandler(viewer);
   bindDefaultPasteHandler(viewer);
 
-  viewer.state.changed.add(() => {
-    if (window && window.parent) {
-      window.parent.postMessage({ 'type': 'state_change', 'state': viewer.state.toJSON() }, '*')
-    }
-  })
+  console.log("setupDefaultViewer", viewer);
+  if (viewer.state) {
+    viewer.state.changed.add(() => {
+      console.log("viewer state changed");
+      if (window && window.parent) {
+        console.log("has window, and parent window", window, window.parent);
+        window.parent.postMessage({ type: "state_change", state: viewer.state.toJSON() }, "*");
+        console.log("json", viewer.state.toJSON());
+      }
+    });
+  }
 
   return viewer;
 }
