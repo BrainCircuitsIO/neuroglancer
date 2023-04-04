@@ -58,7 +58,7 @@ export function setupDefaultViewer() {
   bindDefaultCopyHandler(viewer);
   bindDefaultPasteHandler(viewer);
 
-  console.log("setupDefaultViewer", viewer);
+  //console.log("setupDefaultViewer", viewer);
   if (viewer.state) {
     viewer.state.changed.add(() => {
       //console.log("viewer state changed");
