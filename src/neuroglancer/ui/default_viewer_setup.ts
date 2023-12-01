@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import debounce from "lodash/debounce";
 import { StatusMessage } from "neuroglancer/status";
 import {
   bindDefaultCopyHandler,
@@ -34,12 +35,16 @@ export function setupDefaultViewer() {
   setDefaultInputEventBindings(viewer.inputEventBindings);
 
   const hashBinding = viewer.registerDisposer(
-    new UrlHashBinding(viewer.state, viewer.dataSourceProvider.credentialsManager, {
-      defaultFragment:
-        typeof NEUROGLANCER_DEFAULT_STATE_FRAGMENT !== "undefined"
-          ? NEUROGLANCER_DEFAULT_STATE_FRAGMENT
-          : undefined,
-    })
+    new UrlHashBinding(
+      viewer.state,
+      viewer.dataSourceProvider.credentialsManager,
+      {
+        defaultFragment:
+          typeof NEUROGLANCER_DEFAULT_STATE_FRAGMENT !== "undefined"
+            ? NEUROGLANCER_DEFAULT_STATE_FRAGMENT
+            : undefined,
+      }
+    )
   );
   viewer.registerDisposer(
     hashBinding.parseError.changed.add(() => {
@@ -59,11 +64,16 @@ export function setupDefaultViewer() {
   bindDefaultPasteHandler(viewer);
 
   if (viewer.state) {
-    viewer.state.changed.add(() => {
-      if (window && window.parent) {
-        window.parent.postMessage({ type: "state_change", state: viewer.state.toJSON() }, "*");
-      }
-    });
+    viewer.state.changed.add(
+      debounce(() => {
+        if (window && window.parent) {
+          window.parent.postMessage(
+            { type: "state_change", state: viewer.state.toJSON() },
+            "*"
+          );
+        }
+      }, 400)
+    );
   }
 
   return viewer;
